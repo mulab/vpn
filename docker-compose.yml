@@ -1,0 +1,31 @@
+ovpndata:
+  image: busybox
+  volumes:
+  - /etc/openvpn
+
+gen:
+  image: kylemanna/openvpn
+  volumes_from:
+  - ovpndata
+  command: ovpn_genconfig -u udp://vpn.lab.mu
+
+init:
+  image: kylemanna/openvpn
+  volumes_from:
+  - ovpndata
+  command: ovpn_initpki
+
+server:
+  image: kylemanna/openvpn
+  volumes_from:
+  - ovpndata
+  ports:
+  - "1194:1194/udp"
+  cap_add:
+  - NET_ADMIN
+  restart: always
+
+genclient:
+  image: kylemanna/openvpn
+  volumes_from:
+  - ovpndata
