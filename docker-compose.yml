@@ -29,3 +29,10 @@ genclient:
   image: kylemanna/openvpn
   volumes_from:
   - ovpndata
+
+modify:
+  image: ubuntu
+  volumes_from:
+  - ovpndata
+  command: bash
+  working_dir: /etc/openvpn
