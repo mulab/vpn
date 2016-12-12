@@ -1,38 +1,34 @@
-ovpndata:
-  image: busybox
-  volumes:
-  - /etc/openvpn
-
-gen:
-  image: kylemanna/openvpn
-  volumes_from:
-  - ovpndata
-  command: ovpn_genconfig -u udp://vpn.lab.mu
-
-init:
-  image: kylemanna/openvpn
-  volumes_from:
-  - ovpndata
-  command: ovpn_initpki
-
-server:
-  image: kylemanna/openvpn
-  volumes_from:
-  - ovpndata
-  ports:
-  - "1194:1194/udp"
-  cap_add:
-  - NET_ADMIN
-  restart: always
-
-genclient:
-  image: kylemanna/openvpn
-  volumes_from:
-  - ovpndata
-
-modify:
-  image: ubuntu
-  volumes_from:
-  - ovpndata
-  command: bash
-  working_dir: /etc/openvpn
+version: '2'
+services:
+  genconfig:
+    image: kylemanna/openvpn
+    volumes:
+      - data:/etc/openvpn
+    command: ovpn_genconfig -u udp://vpn.cgcgbcbc.com
+  init:
+    image: kylemanna/openvpn
+    volumes:
+      - data:/etc/openvpn
+    command: ovpn_initpki
+  server:
+    image: kylemanna/openvpn
+    volumes:
+      - data:/etc/openvpn
+    cap_add:
+      - NET_ADMIN
+    restart: always
+    ports:
+      - "1194:1194/udp"
+  gen:
+    image: kylemanna/openvpn
+    volumes:
+      - data:/etc/openvpn
+  modify:
+    image: ubuntu
+    volumes:
+      - data:/etc/openvpn
+    command: bash
+    working_dir: /etc/openvpn
+volumes:
+  data:
+    driver: local
